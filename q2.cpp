@@ -10,6 +10,7 @@ class stack
     {
         index=-1;
         size=2000;
+        ptr= new int[size];
     }
     void push(int data)
     {
@@ -19,12 +20,10 @@ class stack
         }
         else
         {
-           
-            ptr= new int[100];
             //*(ptr+index)=data;
             ptr[++index]=data;
             cout<<"Element pushed\n";
-            
+
             ++count;
         }
     }
@@ -55,7 +54,7 @@ class stack
         cout<<"The elements are: \n";
         for(int i=0;i<=index;i++)
         {
-            cout<<ptr[index]<<" ";
+            cout<<ptr[i]<<" ";
         }
         cout<<endl;
     }
@@ -118,7 +117,7 @@ int main()
                  break;
         case '5': {
                     s1.countofelements();
-        }   
+        }
                 break;
 
         case '6': {
@@ -127,7 +126,7 @@ int main()
                     }
                     break;
     }
-    
+
 }while(ch!='0');
 
 return 0;

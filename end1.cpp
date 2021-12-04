@@ -78,6 +78,10 @@ int main(){
     int n, input;
     cout <<"enter the number of nodes\n";
     cin>>n;
+    if(n%2!=0){
+        cout<<"n needs to be even";
+        return 0;
+    }
     for(int i=0;i<n;i++){
         cin>>input;
         insert(input);

@@ -27,7 +27,7 @@ void addEdge(Graph g, int n1, int n2, int weight){
     g.edges[n2][n1]=weight;
 }
 
-int minWeightKey(Graph g, int weights[], int n){
+int minWeightKey(Graph g, int weights[]){
     int min=INT_MAX, index=0;
     for (int i = 0; i < g.n; ++i){
         if(!g.visited[i]&&weights[i]<min){
@@ -38,40 +38,33 @@ int minWeightKey(Graph g, int weights[], int n){
     return index;
 }
 
-void printMST(int parent[], Graph g)
+void printOverallWeights(int weights[], int n)
 {
-    cout<<"Edge \tWeight\n";
-    for (int u = 1; u < g.n; u++){
-        for (int k = 0; k <g.n; ++k){
-            if(k==parent[u]&&g.edges[u][k]){
-                cout<<parent[u]<<" - "<<u<<"\t"<<g.edges[u][k]<<endl;
-            }
-        }
+    cout<<"Vertex \tDistance from Source\n";
+    for (int u = 0; u < n; u++){
+        cout<<u<<"\t"<<weights[u]<<endl;
     }
 }
 
-void primMST(Graph g)
+void singleSourceShortestPath(Graph g)
 {
-    int parent[g.n];
     int weights[g.n];
 
     for (int i = 0; i < g.n; i++){
         weights[i] = INT_MAX;
-        parent[i] = -1;
         g.visited[i] = false;
     }
     weights[0] = 0;
     for (int j = 0; j < g.n - 1; j++) {
-        int u = minWeightKey(g, weights, j);
+        int u = minWeightKey(g, weights);
         g.visited[u] = true;
         for (int k = 0; k < g.n; ++k){
-            if (!g.visited[k]&&g.edges[u][k] && g.edges[u][k]<weights[k]){
-                parent[k] = u;
-                weights[k]=g.edges[u][k];
+            if (!g.visited[k]&&g.edges[u][k] && weights[u] != INT_MAX && (weights[u] + g.edges[u][k]<weights[k])){
+                weights[k]=weights[u] + g.edges[u][k];
             }
         }
     }
-    printMST(parent, g);
+    printOverallWeights(weights, g.n);
 }
 
 int main(){
@@ -86,6 +79,5 @@ int main(){
         if(n1<0 || n2<0)break;
         addEdge(graph, n1, n2,w);
     }
-    cout<<"Minimal Spanning Tree obtain through Prim's Alogrithm\n";
-    primMST(graph);
+    singleSourceShortestPath(graph);
 }

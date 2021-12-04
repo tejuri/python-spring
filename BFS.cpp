@@ -1,39 +1,46 @@
-#include <bits/stdc++.h>
+#include<iostream>
+#include<queue>
 using namespace std;
 
 struct Graph {
     int n;
     bool *visited;
-    list<int> *edges;
+    int **edges;
 };
 
 Graph setup(Graph g, int n){
     g.n=n;
     g.visited = new bool[n];
-    g.edges = new list<int>[n];
+    for(int i=0;i<n;i++){
+        g.visited[i]=false;
+    }
+    g.edges = new int*[n];
+    for(int i=0;i<n;i++){
+        g.edges[i]=new int[n];
+        for(int j=0;j<n;j++)
+            g.edges[i][j]=0;
+    }
     return g;
 }
 
 void addEdge(Graph g, int n1, int n2){
-    g.edges[n1].push_back(n2);
-    g.edges[n2].push_back(n1);
+    g.edges[n1][n2]=1;
 }
 
 void BFS(Graph g, int n){
-    list<int> q;
+    queue<int> q;
     g.visited[n] = true;
-    q.push_back(n);
-    list<int>::iterator i;
+    q.push(n);
     while(!q.empty()){
         n = q.front();
         cout<<n<<" ";
-        q.pop_front();
-        for (i=g.edges[n].begin(); i!= g.edges[n].end(); ++i)
+        q.pop();
+        for (int i=0; i<g.n; ++i)
         {
-            if(!g.visited[*i])
+            if(!g.visited[i] &&g.edges[n][i])
             {
-                g.visited[*i] = true;
-                q.push_back(*i);
+                g.visited[i] = true;
+                q.push(i);
             }
         }
     }

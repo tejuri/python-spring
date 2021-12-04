@@ -1,31 +1,38 @@
-#include <bits/stdc++.h>
+#include<iostream>
 using namespace std;
 
 struct Graph {
     int n;
     bool *visited;
-    list<int> *edges;
+    int **edges;
 };
 
 Graph setup(Graph g, int n){
     g.n=n;
     g.visited = new bool[n];
-    g.edges = new list<int>[n];
+    for(int i=0;i<n;i++){
+        g.visited[i]=false;
+    }
+    g.edges = new int*[n];
+    for(int i=0;i<n;i++){
+        g.edges[i]=new int[n];
+        for(int j=0;j<n;j++)
+            g.edges[i][j]=0;
+    }
     return g;
 }
 
 void addEdge(Graph g, int n1, int n2){
-    g.edges[n1].push_back(n2);
-    g.edges[n2].push_back(n1);
+    g.edges[n1][n2]=1;
 }
 
 void DFS(Graph g, int n){
 g.visited[n] = true;
 cout<<n<<" ";
-list<int>::iterator i;
-for (i = g.edges[n].begin(); i != g.edges[n].end(); ++i)
-    if (!g.visited[*i])
-        DFS(g, *i);
+for (int i = 0; i<g.n; ++i){
+    if (!g.visited[i] && g.edges[n][i])
+        DFS(g, i);
+}
 }
 
 int main(){
@@ -40,6 +47,7 @@ int main(){
         if(n1<0 || n2<0)break;
         addEdge(g, n1, n2);
     }
+    cout<<endl;
     for(int i=0;i<g.n;i++)
         if(!g.visited[i])
             DFS(g, i);

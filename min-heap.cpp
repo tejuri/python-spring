@@ -64,6 +64,14 @@ void deleteAtIndex(int arr[], int *n, int i)
     getMin(arr,n);
 }
 
+int displayMin(int arr[], int n){
+    if(n<=0){
+        cout<<"array is empty";
+        return -1;
+    }
+    return arr[0];
+}
+
 int main() {
     int arr[20000];
     int n, size=0,ch;
@@ -77,11 +85,10 @@ int main() {
     switch(ch)
     {
         case 0: break;
-        case 1: cout<<"Enter the element to be inserted\n";cin>>n;insert(arr, &size, n);break;
-        case 2: cout<<"Enter the index of element to be deleted\n";cin>>n;deleteAtIndex(arr, &size, n);break;
+        case 1: cout<<"Enter the element to be inserted\n";cin>>n;insert(arr, &size, n);cout<<displayMin(arr, size)<<endl;break;
+        case 2: cout<<"Enter the index of element to be deleted\n";cin>>n;deleteAtIndex(arr, &size, n);cout<<displayMin(arr, size)<<endl;break;
     }
 
 }while(ch!=0);
-    cout<<getMin(arr, &size);
     return 0;
 }

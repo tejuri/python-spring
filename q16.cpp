@@ -1,30 +1,28 @@
 #include<iostream>
 
-#define SPACE 10
-
 using namespace std;
 
-class AVLnode {
+class Node {
   public:
     int data;
-  AVLnode * leftchild;
-  AVLnode * rightchild;
+  Node * left;
+  Node * right;
 
-  AVLnode() {
+  Node() {
     data = 0;
-    leftchild = NULL;
-    rightchild = NULL;
+    left = NULL;
+    right = NULL;
   }
-  AVLnode(int v) {
+  Node(int v) {
     data = v;
-    leftchild = NULL;
-    rightchild = NULL;
+    left = NULL;
+    right = NULL;
   }
 };
 
 class AVLTree {
   public:
-    AVLnode * root;
+    Node * root;
   AVLTree() {
     root = NULL;
   }
@@ -35,14 +33,14 @@ class AVLTree {
       return false;
     }
   }
-  
-  int height(AVLnode * temp) {
+
+  int height(Node * temp) {
     if (temp == NULL)
       return -1;
     else {
-  
-      int lheight = height(temp -> leftchild);
-      int rheight = height(temp -> rightchild);
+
+      int lheight = height(temp -> left);
+      int rheight = height(temp -> right);
 
 
       if (lheight > rheight)
@@ -52,35 +50,35 @@ class AVLTree {
   }
 
 
-  int getBalanceFactor(AVLnode * temp) {
+  int getBalanceFactor(Node * temp) {
     if (temp == NULL)
       return -1;
-    return height(temp -> leftchild) - height(temp -> rightchild);
+    return height(temp -> left) - height(temp -> right);
   }
 
-  AVLnode * rightRotate(AVLnode * temp) {
-    AVLnode * temp1 = temp -> leftchild;
-    AVLnode * temp2 = temp1 -> rightchild;
+  Node * rightRotate(Node * temp) {
+    Node * temp1 = temp -> left;
+    Node * temp2 = temp1 -> right;
 
-     
-    temp1 -> rightchild = temp;
-    temp -> leftchild = temp2;
+
+    temp1 -> right = temp;
+    temp -> left = temp2;
 
     return temp1;
   }
 
-  AVLnode * leftRotate(AVLnode * temp1) {
-    AVLnode * temp = temp1 -> rightchild;
-    AVLnode * temp2 = temp -> leftchild;
+  Node * leftRotate(Node * temp1) {
+    Node * temp = temp1 -> right;
+    Node * temp2 = temp -> left;
 
-    
-    temp -> leftchild = temp1;
-    temp1 -> rightchild = temp2;
+
+    temp -> left = temp1;
+    temp1 -> right = temp2;
 
     return temp;
   }
 
-  AVLnode * insert(AVLnode * temp, AVLnode * new_node) {
+  Node * insert(Node * temp, Node * new_node) {
     if (temp == NULL) {
       temp = new_node;
       cout << "Node value inserted" << endl;
@@ -88,98 +86,109 @@ class AVLTree {
     }
 
     if (new_node -> data < temp -> data) {
-      temp -> leftchild = insert(temp -> leftchild, new_node);
+      temp -> left = insert(temp -> left, new_node);
     } else if (new_node -> data > temp -> data) {
-      temp -> rightchild = insert(temp -> rightchild, new_node);
+      temp -> right = insert(temp -> right, new_node);
     } else {
       cout << "Duplicate value" << endl;
       return temp;
     }
 
     int bf = getBalanceFactor(temp);
-   
-    if (bf > 1 && new_node -> data < temp -> leftchild -> data)
+
+    if (bf > 1 && new_node -> data < temp -> left -> data)
       return rightRotate(temp);
 
-    if (bf < -1 && new_node -> data > temp -> rightchild -> data)
+    if (bf < -1 && new_node -> data > temp -> right -> data)
       return leftRotate(temp);
 
-   
-    if (bf > 1 && new_node -> data > temp -> leftchild -> data) {
-      temp -> leftchild = leftRotate(temp -> leftchild);
+
+    if (bf > 1 && new_node -> data > temp -> left -> data) {
+      temp -> left = leftRotate(temp -> left);
       return rightRotate(temp);
     }
 
-   
-    if (bf < -1 && new_node -> data < temp -> rightchild -> data) {
-      temp -> rightchild = rightRotate(temp -> rightchild);
+
+    if (bf < -1 && new_node -> data < temp -> right -> data) {
+      temp -> right = rightRotate(temp -> right);
       return leftRotate(temp);
     }
 
-  
+
     return temp;
 
   }
 
-  AVLnode * minvalue(AVLnode * node) {
-    AVLnode * current = node;
-   
-    while (current -> leftchild != NULL) {
-      current = current -> leftchild;
+  Node * minvalue(Node * node) {
+    Node * current = node;
+
+    while (current -> left != NULL) {
+      current = current -> left;
     }
     return current;
   }
 
-  AVLnode * deleteNode(AVLnode * temp, int v) {
-  
+  Node * deleteNode(Node * temp, int v) {
+
     if (temp == NULL) {
       return NULL;
     }
-    
+
     else if (v < temp -> data) {
-      temp -> leftchild = deleteNode(temp -> leftchild, v);
+      temp -> left = deleteNode(temp -> left, v);
     }
-     
+
     else if (v > temp -> data) {
-      temp -> rightchild = deleteNode(temp -> rightchild, v);
+      temp -> right = deleteNode(temp -> right, v);
     }
-    
+
     else {
-     
-      if (temp -> leftchild == NULL) {
-        AVLnode * temp = temp -> rightchild;
-        delete temp;
-        return temp;
-      } else if (temp -> rightchild == NULL) {
-        AVLnode * temp = temp -> leftchild;
-        delete temp;
-        return temp;
+      if (temp -> left == NULL) {
+        Node * temp1 = temp -> right;
+        if (temp1 == NULL)
+            {
+                temp1 = root;
+                root = NULL;
+        }
+        else
+        *temp = *temp1;
+        delete temp1;
+      } else if (temp -> right == NULL) {
+        Node * temp1 = temp -> left;
+        if (temp1 == NULL)
+            {
+                temp1 = root;
+                root = NULL;
+        }
+        else
+        *temp = *temp1;
+        delete temp1;
       } else {
-        
-        AVLnode * temp = minvalue(temp -> rightchild);
-       
-        temp -> data = temp -> data;
-        
-        temp -> rightchild = deleteNode(temp -> rightchild, temp -> data);
-        
+
+        Node * temp1 = minvalue(temp -> right);
+
+        temp -> data = temp1 -> data;
+
+        temp -> right = deleteNode(temp -> right, temp1 -> data);
+
       }
     }
 
     int bf = getBalanceFactor(temp);
-   
-    if (bf == 2 && getBalanceFactor(temp -> leftchild) >= 0)
+
+    if (bf == 2 && getBalanceFactor(temp -> left) >= 0)
       return rightRotate(temp);
-    
-    else if (bf == 2 && getBalanceFactor(temp -> leftchild) == -1) {
-      temp -> leftchild = leftRotate(temp -> leftchild);
+
+    else if (bf == 2 && getBalanceFactor(temp -> left) == -1) {
+      temp -> left = leftRotate(temp -> left);
       return rightRotate(temp);
     }
-    
-    else if (bf == -2 && getBalanceFactor(temp -> rightchild) <= -0)
+
+    else if (bf == -2 && getBalanceFactor(temp -> right) <= -0)
       return leftRotate(temp);
-    
-    else if (bf == -2 && getBalanceFactor(temp -> rightchild) == 1) {
-      temp -> rightchild = rightRotate(temp -> rightchild);
+
+    else if (bf == -2 && getBalanceFactor(temp -> right) == 1) {
+      temp -> right = rightRotate(temp -> right);
       return leftRotate(temp);
     }
 
@@ -187,28 +196,28 @@ class AVLTree {
   }
 
 
-  void printPreorder(AVLnode * temp)  
+  void printPreorder(Node * temp)
   {
     if (temp == NULL)
       return;
-   
+
     cout << temp -> data << " ";
-   
-    printPreorder(temp -> leftchild);
-    
-    printPreorder(temp -> rightchild);
+
+    printPreorder(temp -> left);
+
+    printPreorder(temp -> right);
   }
 
 
-  AVLnode * Search(AVLnode * temp, int val) {
+  Node * Search(Node * temp, int val) {
     if (temp == NULL || temp -> data == val)
       return temp;
 
     else if (val < temp -> data)
-      return Search(temp -> leftchild, val);
+      return Search(temp -> left, val);
 
     else
-      return Search(temp -> rightchild, val);
+      return Search(temp -> right, val);
   }
 
 };
@@ -227,8 +236,8 @@ int main() {
     cout << "0. Exit Program" << endl;
 
     cin >> option;
- 
-    AVLnode * new_node = new AVLnode();
+
+    Node * new_node = new Node();
 
     switch (option) {
     case 0:
@@ -243,13 +252,14 @@ int main() {
       break;
     case 2:{
       cout << "DISPLAY " << endl;
-      
+
       cout << endl;
-      
+
        obj.printPreorder(obj.root);
+       cout<<endl;
     }
     break;
-    
+
     case 3:
       cout << "DELETE" << endl;
       cout << "Enter value of node to delete in AVL: ";
@@ -266,7 +276,7 @@ int main() {
       cout << "SEARCH" << endl;
       cout << "Enter value of node to search in AVL Tree: ";
       cin >> val;
-     
+
       new_node = obj.Search(obj.root, val);
       if (new_node != NULL) {
         cout << "Value found" << endl;

@@ -30,20 +30,20 @@ void pop()
     int t;
     if(s.top==-1)
      return ;
-     
-     else 
+
+     else
      {
     while(s.top!=-1)
     {
      cout<<s.elements[s.top--]<<" ";
-     
+
      }
      }
 
 }
 class Queue
 {
-    public: 
+    public:
       int front,rear;
       btree *queue[MAX];
       int qsize;
@@ -51,9 +51,9 @@ class Queue
       {
               front=rear=-1;
               qsize=0;
-              
+
       }
- 
+
        void enqueue(btree *item)
        {
               if(rear==MAX-1)
@@ -65,21 +65,21 @@ class Queue
                       front=rear=0;
                       queue[rear]=item;
                       qsize++;
-                      
+
              }
              else
              {
                       rear++;
                       queue[rear]=item;
                       qsize++;
-                    
+
              }
        }
-  
+
        btree *dequeue()
        {
               btree *item;
-  
+
               if(rear==-1)
              {
                        cout<<"\nQUEUE UNDERFLOW";
@@ -90,14 +90,14 @@ class Queue
                        item=queue[front];
                        front=rear=-1;
                        qsize--;
-                       
+
              }
              else
              {
                       item=queue[front];
                       front++;
                       qsize--;
-                     
+
              }
 
              return item;
@@ -116,96 +116,104 @@ btree *newnode(int x)
 btree *insert(btree *root, int data)
 {
     if(root==NULL)
-    root=newnode(data);
-    
-    if(root->leftchild==NULL && root->rightchild==NULL )
-    {
-        root->leftchild=insert(root->leftchild,data);
-    }
-    if(root->leftchild==NULL && root->rightchild!=NULL)
-    {
-        root->leftchild=insert(root->leftchild,data);
-    }
-    else if(root->rightchild==NULL && root->leftchild!=NULL)
-    {
-        root->rightchild=insert(root->rightchild,data);
-    }
+    return newnode(data);
+    Queue q1;
+    q1.enqueue(root);
+    btree *temp=NULL;
 
-    cout<<"Value inserted\n";
-    return root;
+    while(q1.qsize!=0)
+    {
+        temp=q1.dequeue();
+        if (temp->leftchild != NULL)
+            q1.enqueue(temp->leftchild);
+        else {
+            temp->leftchild = newnode(data);
+            return root;
+        }
 
+        if (temp->rightchild)
+            q1.enqueue(temp->rightchild);
+        else {
+            temp->rightchild = newnode(data);
+            return root;
+        }
+    }
 }
 void remove_node(btree *root, btree *n)
 {
+    Queue q1;
     if(root==NULL)
-    return ;
-    if(root==n)
+    return;
+    q1.enqueue(root);
+    btree *temp=NULL;
+
+    while(q1.qsize!=0)
     {
-        delete(n);
-        root=NULL;
-        return ;
+        temp=q1.dequeue();
+
+        if(temp==n)
+        {
+            temp = NULL;
+            delete(n);
+            return;
+        }
+        if(temp->rightchild){
+            if(temp->rightchild==n)
+            {
+                temp->rightchild = NULL;
+                delete(n);
+                return;
+            }
+            else q1.enqueue(temp->rightchild);
+        }
+
+        if(temp->leftchild){
+            if(temp->leftchild==n)
+            {
+                temp->leftchild = NULL;
+                delete(n);
+                return;
+            }
+            else q1.enqueue(temp->leftchild);
+        }
+
     }
-    if(root->leftchild==n)
-    {
-        delete(n);
-        root->leftchild=NULL;
-        return;
-    }
-    if(root->rightchild==n)
-    {
-        delete(n);
-        root->rightchild=NULL;
-        return;
-    }
+
 }
 btree *deletenode(btree *root, int key)
 {
-    Queue q;
+    Queue q1;
     if(root==NULL)
     return NULL;
-    if(!root->leftchild && !root->rightchild)
+    q1.enqueue(root);
+    btree *key_node=NULL;
+    btree *curr_node;
+
+    while(q1.qsize!=0)
     {
-        if(root->data==key)
+        curr_node=q1.dequeue();
+
+        if(curr_node->data==key)
         {
-        delete(root);
-        root= NULL;
+            key_node= curr_node;
         }
-        cout<<"Element deleted is "<<key<<endl;
-         return root;
+
+        if(curr_node->leftchild)
+        q1.enqueue(curr_node->leftchild);
+
+        if(curr_node->rightchild)
+        q1.enqueue(curr_node->rightchild);
+
     }
-        q.enqueue(root);
-        btree *key_node=NULL;
-        btree *curr_node=NULL;
-
-        while(q.qsize!=0)
-        {
-            curr_node=q.dequeue();
-            if(curr_node->data==key)
-            {
-                key_node= curr_node;
-            }
-            if(curr_node->leftchild)
-            {
-                q.enqueue(curr_node->leftchild);
-            }
-            if(curr_node->rightchild)
-            {
-                q.enqueue(curr_node->rightchild);
-            }
-            if(key_node)
-            {
-                key_node->data=curr_node->data;
-                remove_node(root,curr_node);
-            }
-
-            return root;
-        }
-        cout<<"Element deleted is "<<key<<endl;
-
+    cout<<curr_node->data<<endl<<endl;
+    int data = curr_node->data;
+    remove_node(root, curr_node);
+    key_node->data = data;
+    return root;
 }
 
 void inorderTraversal(btree *root){
-    if(root == NULL) 
+    if(root == NULL)
     return;
     inorderTraversal(root->leftchild);
     cout << root->data<<" ";
@@ -213,8 +221,8 @@ void inorderTraversal(btree *root){
 }
 
 void preordertraversal(btree *root){
-   
-    if(root==NULL) 
+
+    if(root==NULL)
     return;
     cout<<root->data<<" ";
     preordertraversal(root->leftchild);
@@ -224,7 +232,7 @@ void preordertraversal(btree *root){
 
 void postorder(btree *root)
 {
-    if(root == NULL) 
+    if(root == NULL)
     return;
 
     postorder(root->leftchild);
@@ -252,7 +260,7 @@ int numberofnodes(btree *root)
     return 1+numberofnodes(root->leftchild)+numberofnodes(root->rightchild);
 }
 
-//full btree is a tree in which every node has either zero or 2 children 
+//full btree is a tree in which every node has either zero or 2 children
 
 bool isfull(btree *root)
 {
@@ -301,7 +309,7 @@ void displaylevel(btree *root, int l)
           q1.enqueue(NULL);
           level++;
         }
-        
+
     }
     pop();
 }
@@ -312,13 +320,13 @@ int main()
 	s.size=20000;
     s.top=-1;
 	int n;
-	   
+
 	btree* rootptr;
 	rootptr=NULL;
     btree *temp=rootptr;
     bool full;
 
-    
+
     int ch;
     do{
     cout<<"Enter your choices :Enter 0 to exit\n";
@@ -337,15 +345,14 @@ int main()
     {
         case 0:
         break;
-        case 1: 
+        case 1:
         cout<<"Enter an element: \n";
         cin>>n;
         temp=insert(temp,n);
-        cout<<"Value inserted\n";
-    
-        break;      
 
-        case 2: 
+        break;
+
+        case 2:
         cout<<"Enter the value of the node to be deleted:\n";
         cin>>n;
         temp=deletenode(temp,n);

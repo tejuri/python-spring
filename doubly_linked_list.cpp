@@ -27,7 +27,7 @@ void insert(int data)
 
 void display(Node* head) {
    struct Node* ptr;
-   ptr = ;
+   ptr = head;
    while(ptr != NULL) {
       cout<< ptr->data <<" ";
       ptr = ptr->next;
@@ -36,7 +36,7 @@ void display(Node* head) {
 }
 
 int count() {
-    int c=0
+    int c=0;
    struct Node* ptr;
    ptr = head;
    while(ptr != NULL) {
@@ -45,9 +45,9 @@ int count() {
    }
    return c;
 }
-truct Node *front, *middle,*end;
-int frontMiddleEndSplit(int a, int b) {
-   struct Node* ptr, *temp, *front, *middle,*end;
+struct Node *front, *middle,*end1;
+void frontMiddleend1Split(int a, int b, int c) {
+   struct Node* ptr, *temp;
    ptr = head;
    while(ptr != NULL && a>0) {
         a--;
@@ -58,7 +58,6 @@ int frontMiddleEndSplit(int a, int b) {
         if (front == NULL) {
             newNode->prev = NULL;
             front = newNode;
-            return;
         }
         else{
         while (temp->next != NULL)
@@ -69,7 +68,7 @@ int frontMiddleEndSplit(int a, int b) {
         ptr = ptr->next;
    }
    while(ptr != NULL && b>0) {
-        a--;
+        b--;
        struct Node* newNode = new Node;
         newNode->data = ptr->data;
         newNode->next = NULL;
@@ -86,15 +85,15 @@ int frontMiddleEndSplit(int a, int b) {
         newNode->prev = temp;}
         ptr = ptr->next;
    }
-   while(ptr != NULL && a>0) {
-        a--;
+   while(ptr != NULL && c>0) {
+        c--;
        struct Node* newNode = new Node;
         newNode->data = ptr->data;
         newNode->next = NULL;
-        temp = end;
-        if (end == NULL) {
+        temp = end1;
+        if (end1 == NULL) {
             newNode->prev = NULL;
-            end = newNode;
+            end1 = newNode;
         }
         else{
         while (temp->next != NULL)
@@ -115,7 +114,7 @@ int main(){
         insert(n);
     }
     display(head);
-    int n = count();
+    n = count();
     int a,b;
     if((n+1)%3 == 0){
         a = (n+1)/3;
@@ -125,8 +124,10 @@ int main(){
         a = (n-1)/3;
         b = (n+2)/3;
     }
+    cout<<a<<" "<<b<<endl;
+    frontMiddleend1Split(a,b,a);
     display(front);
     display(middle);
-    display(end);
+    display(end1);
 return 0;
 }

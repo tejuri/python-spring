@@ -1,4 +1,5 @@
 #include<iostream>
+#include <stack>
 using namespace std;
 #define SIZE 5000
 struct Queue
@@ -8,7 +9,7 @@ struct Queue
     struct node* *array;
 };
 
-// A utility function to create a new Queue
+
 struct Queue* createQueue(int size)
 {
     struct Queue* queue = (struct Queue*) malloc(sizeof( struct Queue ));
@@ -26,7 +27,6 @@ struct Queue* createQueue(int size)
     return queue;
 }
 
-// Standard Queue Functions
 int isEmpty(struct Queue* queue)
 {
     return queue->front == -1;
@@ -106,36 +106,74 @@ void reverseinordertraversal(node *root)
     else selectedPath(root->right, 0);
  }
 
-node* constructTree(struct node* root, struct Queue* queue)
+node* interchange(struct node* root)
 {
+    struct Queue* queue = createQueue(SIZE);
+    stack<node*> stack;
+    Enqueue(root, queue);
     Enqueue(NULL, queue);
-
     int data, level=0;
+    while (!isEmpty(queue))
+    {
+        struct node* temp = Dequeue(queue);
+        if(temp==NULL){
+            while (!stack.empty()) {
+                struct node* temp1 = stack.top();
+                struct node* front = getFront(queue);
+                int x = temp1->data;
+                temp1->data=front->data;
+                front->data=x;
+                Dequeue(queue);
+                stack.pop();
+                Enqueue(front, queue);
+            }
+        }
+        if (temp&&temp->left){
+            Enqueue(temp->left, queue);
+            stack.push(temp->left);
+        }
+
+        if (temp&&temp->right){
+            Enqueue(temp->right, queue);
+            stack.push(temp->right);
+        }
+        Enqueue(NULL, queue);
+    }
+    return root;
+}
+
+struct node* constructTree(struct node* node, int data)
+{
+    if (node == NULL)
+        return newNode(data);
+
+    if (data < node->data)
+        node->left = constructTree(node->left, data);
+    else if (data > node->data)
+        node->right = constructTree(node->right, data);
+
+    return node;
+}
+
+void levelOrder(struct node* root)
+{
+    struct Queue* queue = createQueue(SIZE);
+
+    stack<node*> stack;
+
+    Enqueue(root, queue);
 
     while (!isEmpty(queue))
     {
-        struct node* temp1 = Dequeue(queue);
+        struct node* temp = Dequeue(queue);
 
-        if(temp1==NULL){
-            level++;
-            Enqueue(NULL, queue);
-            continue;
-        }
-        struct node* temp2 = Dequeue(queue);
-        if(temp2==NULL){
-            return temp1;
-        }
+        cout<<temp->data<<" ";
 
-        if(level%2==0)
-        data = min(temp1->data, temp2->data);
-        else
-        data = max(temp1->data, temp2->data);
+        if (temp->left)
+            Enqueue(temp->left, queue);
 
-        struct node* temp = newNode(data);
-        temp->left = temp1;
-        temp->right = temp2;
-
-        Enqueue(temp, queue);
+        if (temp->right)
+            Enqueue(temp->right, queue);
     }
 }
 
@@ -146,14 +184,9 @@ int main(){
     while(1){
         cin>>n;
         if(n==-1)break;
-        Enqueue(newNode(n), queue);
+        root = constructTree(root,n);
     }
-    root = constructTree(root, queue);
-    cout<<"The reverse inorder traversal: \n";
-    reverseinordertraversal(root);
+    root = interchange(root);
     cout<<endl;
-    cout<<"The selected path from root: \n";
-    selectedPath(root,0);
-    cout<<endl;
-
+    levelOrder(root);
 }
